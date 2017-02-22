@@ -1,0 +1,40 @@
+#########################################################################
+##                                                                      #
+## Modbus Traffic Generator 						#
+##                                                                      #
+#########################################################################
+##                                                                      #
+## Version: 1.0                                                         #
+## Date:    2.12.2013                                                  #
+##                                                                      #
+#########################################################################
+
+DESCRIPTION:
+
+This tool Generates Modbus traffic to trigger alerts in Snort Intrusion detection System.
+
+It reads Snort rules from "scada.rules" input file,parses the rules and generate prooper packet(s) that would trigger the coresponding rule alerts in the intrusion detection system.
+
+
+INSTALLATION:
+
+You can simply download the current version from here: 
+http://sourceforge.net/projects/modbus-traffic-generator/
+
+Unzip and run the included Python 'Modbus_traffic_generator.py' script as root or 
+using 'sudo'. 
+
+PREREQUISITES
+
+Scapy and Python must be installed on the machine for program to run. Snort IDS must be installed on the target machine or within the network (Running on promiscuous mode).
+You can download the latest version of Scapy 
+here: http://www.secdev.org/projects/scapy/
+
+
+In order to send IPv4 packets to the network directly from the tool, you must have full privileges on the machine. start by typing command shown below followed by the Target machine IP.
+
+  $ sudo Python Modbus_traffic_generator.py.py <target Machine IP>
+for example
+  $ sudo Python Modbus_traffic_generator.py.py 10.20.30.40
+
+or a similar command depending on your Network configuratin.

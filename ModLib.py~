@@ -1,0 +1,18 @@
+from scapy.all import *
+class ModbusADU(Packet):
+	name = "ModbusADU"
+	fields_desc = [ XShortField("transId", 0x0000),
+			XShortField("protoId", 0x0000),
+			XShortField("len", 0x0000),
+			XByteField("unitId", Ox00) ]
+	def post_build(self, pkt, pdu):
+		pkt += pkt[:4] + struct.pack("!H",6) + pkt[6:]
+		return pkt
+
+class ModbusPDU03(Packet):
+	name = "Read Holding Registers"
+	fields_desc = [ XByteField("funcCode", 0x03),
+			XByteField("Start High", 0x02),
+			XByteField("Start Low", 0x59),
+			XByteField("Num Reg High", 0x00),
+			XByteField("Num Reg Low", 0x04)]

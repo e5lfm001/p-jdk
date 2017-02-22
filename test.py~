@@ -1,0 +1,42 @@
+#! /usr/bin/env python
+
+import logging
+logging.getLogger("scapy").setLevel(1)
+
+from scapy import *
+from ModLib import *
+
+# IP for all transmissions
+ip = IP(dst="74.117.178.90")
+
+# Sets up the session with a TCP three-way handshake
+# Send the syn, receive the syn/ack
+tcp = TCP( flags = 'S', window = 65535, sport = RandShort(), dport = 502, options = [('MSS', 1360 ), ('NOP', 1), ('NOP', 1), ('SAckOK', '')])
+synAck = sr1 ( ip / tcp )
+
+# Send the ack
+tcp.flags = 'A'
+tcp.sport = synAck[TCP].dport
+tcp.seq = synAck[TCP].ack
+tcp.ack = synAck[TCP].seq + 1
+tcp.options = ''
+send( ip / tcp )
+
+# Creates and sends the Modbus Read Holding Registers command packet
+# Send the ack/push i.e. the request, receive the data i.e. the response
+tcp.flags = 'AP'
+adu = ModbusADU()
+pdu = ModbusPDU03()
+adu = adu / pdu
+tcp = tcp / adu
+data = sr1(( ip / tcp ), timeout = 2)
+data.show()
+
+# Acknowledges the response
+# Ack the data response
+# TODO: note, the 17 below should be replaced with a read packet length method...
+tcp.flags = 'A'
+tcp.seq = data[TCP].ack
+tcp.ack = data[TCP] + 17
+tcp.payload = ''
+finAck = sr1( ip / tcp )
